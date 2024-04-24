@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang=""><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Bruno Ribas, Bruno Ribeiro, Igor Penha, Lucas Bergholz e Wagner Cunha">
+  <title>LIGHTSOUT RGB* Apague todas as lâmpadas</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">body {
+margin: auto;
+padding-right: 1em;
+padding-left: 1em;
+max-width: 44em; border-left: 1px solid black;
+border-right: 1px solid black;
+color: black;
+font-family: Verdana, sans-serif;
+font-size: 100%;
+line-height: 140%;
+color: #333; }
+pre {
+border: 1px dotted gray;
+background-color: #ececec;
+color: #1111111;
+padding: 0.5em;
+}
+blockquote {
+color: #666666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+code {
+font-family: monospace;
+}
+h1 a, h2 a, h3 a, h4 a, h5 a { text-decoration: none;
+color: #7a5ada; }
+h1, h2, h3, h4, h5 { font-family: verdana;
+font-weight: bold;
+border-bottom: 1px dotted black;
+color: #7a5ada; }
+h1 {
+font-size: 130%;
+}
+h2 {
+font-size: 110%;
+}
+h3 {
+font-size: 95%;
+}
+h4 {
+font-size: 90%;
+font-style: italic;
+}
+h5 {
+font-size: 90%;
+font-style: italic;
+}
+h1.title {
+font-size: 200%;
+font-weight: bold;
+padding-top: 0.2em;
+padding-bottom: 0.2em;
+text-align: left;
+border: none;
+}
+dt code {
+font-weight: bold;
+}
+dd p {
+margin-top: 0;
+}
+#footer {
+padding-top: 1em;
+font-size: 70%;
+color: gray;
+text-align: center;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">LIGHTSOUT RGB* Apague todas as lâmpadas</h1>
+<p class="author">Bruno Ribas, Bruno Ribeiro, Igor Penha, Lucas Bergholz
+e Wagner Cunha</p>
+</header>
+<h1 id="descrição-do-jogo">Descrição do jogo</h1>
+<p>O jogo LightsOut é um quebra-cabeça eletrônico lançado pela Tiger
+Electronics em 1995. No jogo físico, há uma matriz de luzes que podem
+estar ligadas ou desligadas. O objetivo é desligar todas as luzes,
+porém, ao pressionar uma luz, seu estado e o estado das luzes adjacentes
+são invertidos.</p>
+<p>A história por trás do jogo é que, em uma noite escura, todas as
+luzes da cidade de Lightsville apagaram repentinamente. Para restaurar a
+luz na cidade, o jogador assume o papel de um engenheiro elétrico
+encarregado de restaurar a energia nas ruas iluminadas. O desafio está
+em encontrar a sequência correta de cliques para trazer a luz de volta a
+todas as ruas.</p>
+<p>Com a popularização dos dispositivos eletrônicos e a evolução dos
+jogos digitais, o LightsOut foi adaptado para várias plataformas, como
+computadores, smartphones e tablets. A essência do jogo permanece a
+mesma: resolver o quebra-cabeça desligando todas as luzes da matriz.</p>
+<p>Nesta versão modificada do jogo LightsOut, introduzimos a versão
+LightsOut RGB, aqui as luzes do jogo não estão restritas à apenas dois
+estados (ON/OFF) mas sim, quatro estados possíveis (RED, GREEN, BLUE e
+OFF). Outrossim, não só as luzes adjacentes são invertidos, mas todas as
+luzes que estiverem na mesma linha e coluna da luz inicialmente clicada.
+Todavia, foi introduzido também a característica de botões quebrados.
+Essa modificação foi inspirada em jogos físicos que foram muito usados,
+desse modo, alguns botões podem apresentar diferentes comportamentos em
+resposta as ações executadas. Exitem quatro tipos de botões
+quebrados:</p>
+<ol>
+<li>Os que não mudam de estado quando clicados. No entanto, as luzes
+adjacentes, mesma linha e coluna, ainda são afetadas e trocariam de
+estado.</li>
+<li>Os que não mudam de estado como consequência do clique de um botão
+em mesma coluna. No entanto, mudam de estado quando clicados ou como
+conseqência do clique de um botão em mesma linha.</li>
+<li>Os que não mudam de estado como consequência do clique de um botão
+em mesma linha. No entanto, mudam de estado quando clicados ou como
+conseqência do clique de um botão em mesma coluna.</li>
+<li>Os que não mudam de estado como consequência nem do clique de um
+botão em mesma linha nem em mesma coluna. No entando, mudam de estado
+quando clicados.</li>
+</ol>
+<h1 id="descrição-do-problema">Descrição do problema</h1>
+<p>Você desenvolver um programa que leia a especificação do desafio,
+gere o modelo PDDL do jogo LightsOut RGB, crie os arquivos de domínio e
+problema PDDL correspondentes, chame o planejador selecionado com os
+parâmetros corretos, obtenha o plano retornado pelo planejador e gere
+uma saída no formato especificado na descrição do trabalho.</p>
+<h2 id="descrição-dos-planejadores">Descrição dos planejadores</h2>
+<p>Existem vários planejadores disponíveis para resolver o problema do
+jogo LightsOut. A localização e a forma de chamada dos planejadores são
+as seguintes:</p>
+<ol>
+<li>Planejadores Madagascar (M, Mp, MpC):
+<ul>
+<li>Localização: <code class="verbatim">/tmp/dir/software/planners/madagascar/{M,Mp,MpC}</code>.</li>
+</ul></li>
+<li>Fast Downward:
+<ul>
+<li>Localização: <code class="verbatim">/tmp/dir/software/planners/downward/fast-downward.py</code>.</li>
+<li>Localização: <code class="verbatim">/tmp/dir/software/planners/downward-fdss23/fast-downward.py</code>.</li>
+<li>Localização: <code class="verbatim">/tmp/dir/software/planners/scorpion-maidu/fast-downward.py</code>.</li>
+</ul></li>
+<li>Planejador em Julia:
+<ul>
+<li>Localização: <code class="verbatim">/tmp/dir/software/planners/julia/planner.jl</code>.</li>
+</ul></li>
+</ol>
+<h1 id="como-classificar-nesta-modalidade">Como classificar nesta
+modalidade</h1>
+<p>Nesta modalidade de classificação, o problema é dividido em três
+categorias: AGILE, SATISFICING e OPTIMAL. A pontuação é computada da
+seguinte forma:</p>
+<ol>
+<li>Categoria AGILE:
+<ul>
+<li>A pontuação é obtida pela fórmula
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>o</mi><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mi>E</mi><mi>M</mi><mi>P</mi><msub><mi>O</mi><mi>D</mi></msub><msub><mi>E</mi><mi>E</mi></msub><mi>X</mi><mi>E</mi><mi>C</mi><mi>U</mi><mi>C</mi><mi>A</mi><mi>O</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mi>l</mi><mi>o</mi><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>150</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">log(TEMPO_DE_EXECUCAO) / log(150)</annotation></semantics></math>.</li>
+<li>Se o tempo de execução for menor ou igual a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+segundo, a pontuação é
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>.</li>
+<li>A track tem um time limit de 30s.</li>
+</ul></li>
+<li>Categoria SATISFICING:
+<ul>
+<li>A pontuação é calculada pela fórmula
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>*</mo><mi>/</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">C* / C</annotation></semantics></math>,
+onde
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>*</mo></mrow><annotation encoding="application/x-tex">C*</annotation></semantics></math>
+é a quantidade de passos do plano de referência e
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
+é a quantidade de passos do plano encontrado.</li>
+<li>Quanto menor for a quantidade de passos do plano encontrado em
+relação ao plano de referência, melhor será a pontuação.</li>
+<li>A track tem um time limit de 180s.</li>
+</ul></li>
+<li>Categoria OPTIMAL:
+<ul>
+<li>O objetivo é responder o plano ótimo.</li>
+<li>O desempenho é avaliado pela corretude do plano e não pela
+pontuação.</li>
+<li>A track tem um time limit de 180s.</li>
+</ul></li>
+</ol>
+<p>O vencedor será determinado com base na soma dos pontos obtidos em
+todas as categorias.</p>
+<h1 id="entrada">Entrada</h1>
+<p>A entrada é composta com um conjunto de linhas, e deverão ser lidas
+da entrada padrão. As linhas, da entrada, representam a matriz do jogo,
+você descobrirá as dimensões conforme faz a leitura. A entrada termina
+em <code>EOF</code>.</p>
+<p>Cada lâmpada/botão é representado por dois caracteres, um
+representando a condição (tipo que quebra) do botão e outro o estado
+atual da luz, nessa ordem, conforme a descrição abaixo:</p>
+<ul>
+<li><code class="verbatim">W</code> representa uma luz desligada;</li>
+<li><code class="verbatim">R</code> representa uma luz ligada na cor
+vermelha;</li>
+<li><code class="verbatim">G</code> representa uma luz ligada na cor
+verde;</li>
+<li><code class="verbatim">B</code> representa uma luz ligada na cor
+azul;</li>
+<li><code class="verbatim">-</code> representa a condição de um botão
+não quebrado;</li>
+<li><code class="verbatim">*</code> representa a condição de um botão
+com o tipo de quebra 1;</li>
+<li><code class="verbatim">_</code> representa a condição de um botão
+com o tipo de quebra 2;</li>
+<li><code class="verbatim">|</code> representa a condição de um botão
+com o tipo de quebra 3;</li>
+<li><code class="verbatim">#</code> representa a condição de um botão
+com o tipo de quebra 4;</li>
+</ul>
+<h1 id="saída">Saída</h1>
+<p>A saída é composta por uma única linha contendo as coordenadas dos
+botões apertados, em ordem, a fim de obter todas as lâmpadas apagadas.
+Cada clique é representado pelo plano cartesiano <code class="verbatim">(y, x)</code>, sendo <code class="verbatim">y</code> a
+linha, iniciando em
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>,
+e <code class="verbatim">x</code> a coluna, iniciando em
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>,
+e separados pelo caractere <code class="verbatim">;</code> , exceto pelo
+último, que deverá possuir apenas uma quebra de linha.</p>
+<h1 id="exemplo">Exemplo</h1>
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+<pre class="example"><code>*W-R-R-B
+-R|W-W-G
+-B-G_G-G
+-R-W-W#W
+</code></pre>
+<h3 id="saída-para-o-exemplo-de-entrada-acima">Saída para o exemplo de
+entrada acima</h3>
+<pre class="example"><code>(click 2 3);(click 2 3);(click 0 0);(click 0 0);(click 0 0)
+</code></pre>
+<h2 id="experimente-você-mesmo">Experimente você mesmo</h2>
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matriz Clicável</title>
+    <style>
+body {
+background-color: beige;
+}
+.cell {
+width: 40px;
+height: 40px;
+display: inline-block;
+margin: 1px;
+text-align: center;
+vertical-align: middle;
+line-height: 40px;
+cursor: pointer;
+border: 4px solid #bbb;
+}
+.W { background-color: white; }
+.R { background-color: red; }
+.G { background-color: green; }
+.B { background-color: blue; }
+.broken1 { border: 4px dotted #222222; }
+.broken2 { border: 4px dashed #222222; }
+.lineblock {
+border-left: 4px solid black;
+border-right: 4px solid black;
+}
+.columnblock {
+border-top: 4px solid black;
+border-bottom: 4px solid black;
+}
+</style>
+
+
+    <textarea id="inputMatrix" rows="4" cols="50">*R-W-W-W
+-G|B-R-W
+-W-W_W-W
+-W-W-W#W
+</textarea><br>
+    <button onclick="startGame()">Iniciar</button>
+    <div id="matrix"></div>
+
+    <textarea id="planning-input" rows="4" cols="50">(click 0 0)
+(click 1 1)
+</textarea><br>
+    <button onclick="play()">Jogar</button>
+
+    <script>
+
+        // TODO2 - create a map generator
+        class GameCore {
+            constructor() {
+                this.matrix = null;
+                this.win = false;
+                this.setHandlers();
+            }
+
+            loadMap(input) {
+                let matrix = [];
+                for (let i = 0; i < input.length; i++) {
+                    if (input[i].length === 0) continue;
+                    let currentLine = [];
+                    for (let j = 0; j < input[i].length/2; j++) {
+                        const [constraintPos, colorPos] = [j*2, j*2+1];
+                        const [constraint, color] = [input[i][constraintPos], input[i][colorPos]];
+                        currentLine = [...currentLine, {constraint: constraint, color: color}];
+                    }
+                    matrix = [...matrix, currentLine];
+                }
+                this.matrix = matrix;
+                this.win = this.check_win();
+            }
+
+            setHandlers() {
+                this.handlers = {
+                    '-': (cell, constraint) => this.handleColorChangeNormal(cell, constraint),
+                    '*': (cell, constraint) => this.handleColorChangeBroken1(cell, constraint),
+                    '#': (cell, constraint) => this.handleColorChangeBroken2(cell, constraint),
+                    '|': (cell, constraint) => this.handleColorChangeNormal(cell, constraint),
+                    '_': (cell, constraint) => this.handleColorChangeNormal(cell, constraint)
+                }
+            }
+
+            changeColor(row, col, callback) {
+                for (let i = 0; i < this.matrix.length; i++) {
+                    for (let j = 0; j < this.matrix[i].length; j++) {
+                        let is_activation_cell = (row === i && col === j);
+                        if (row === i || col === j) {
+                            let cell = this.matrix[i][j];
+
+                            // same line  
+                            if (cell.constraint === '|' && !is_activation_cell && i === row) continue;
+                            
+                            // same col
+                            if (cell.constraint === '_' && !is_activation_cell && j === col) continue;
+                            
+                            this.handlers[cell.constraint](cell, is_activation_cell);
+                            callback(cell.color, cell.constraint, i, j);
+                        }
+                    }
+                }
+                this.check_win();
+                console.log(this.matrix)
+            }
+            
+            handleColorChangeNormal(cell, _) {
+                cell.color = nextColor(cell.color)
+            }
+
+            handleColorChangeBroken1(cell, is_activation_cell) {
+                if (is_activation_cell) return;
+                this.handleColorChangeNormal(cell, is_activation_cell)
+            }
+
+            handleColorChangeBroken2(cell, is_activation_cell) {
+                if (is_activation_cell)
+                    this.handleColorChangeNormal(cell, is_activation_cell)
+            }
+
+            check_win() {
+                for (let i = 0; i < this.matrix.length; i++) {
+                    for (let j = 0; j < this.matrix[i].length; j++) {
+                        if (this.matrix[i][j].color !== 'W') {
+                            this.win = false;
+                            return this.win;
+                        };
+                    }
+                }
+                console.log("All white");
+                this.win = true;
+                return this.win;
+            }
+
+            is_game_win() {
+                return this.win;
+            }
+
+            runPlan(plan) {
+                const actions = compile_plan(plan);
+
+                for (let action of actions) {
+                    this.changeColor(action.row, action.col, () => {})
+                }
+            }
+
+            async runPlanWithCallback(plan, callback) {
+                const actions = compile_plan(plan);
+
+                for (let action of actions) {
+                    await callback(action.row, action.col);
+                }
+            }
+
+            getCurrentMap() {
+                let map_ = "";
+                for (let i = 0; i < this.matrix.length; i++) {
+                    let line = "";
+                    for (let j = 0; j < this.matrix[i].length; j++) {
+                        line += `${this.matrix[i][j].constraint}${this.matrix[i][j].color}`;
+                    }
+                    map_ += `${line}\n`;
+                }
+                return map_;
+            }
+            
+        }
+
+        function nextColor(color) {
+            switch (color) {
+                case 'W': return 'R';
+                case 'R': return 'G';
+                case 'G': return 'B';
+                case 'B': return 'W';
+                default: return 'W';
+            }
+        }
+
+        function colorClass(char) {
+            switch (char) {
+                case 'W': return 'W';
+                case 'R': return 'R';
+                case 'G': return 'G';
+                case 'B': return 'B';
+                default: return '';
+            }
+        }
+
+        function constraintClass(char) {
+            switch (char) {
+                case '-': return 'normal';
+                case '*': return 'broken1';
+                case '#': return 'broken2';
+                case '|': return 'lineblock';
+                case '_': return 'columnblock';
+                default: return 'normal';
+            }
+        }
+
+        function compile_plan(plan) {
+            let matchings = Array.from(plan.matchAll(/\(click (\d+) (\d+)\);?\s*/g));
+            if (!matchings) {
+                throw new Error('Action dos not match a planning pattern');
+            }
+            return matchings.map((match) => {
+                return {row: Number(match[1]), col: Number(match[2])};
+            })
+        }
+
+        // Browser Logic
+
+        let playing = false;
+        const game = new GameCore();
+
+        function startGame() {
+            const input = document.getElementById('inputMatrix').value.split('\n');
+            const matrix = document.getElementById('matrix');
+            matrix.innerHTML = '';
+
+            game.loadMap(input);
+            for (let i = 0; i < game.matrix.length; i++) {
+                const rowDiv = document.createElement('div');
+                for (let j = 0; j < game.matrix[i].length; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = `cell ${colorClass(game.matrix[i][j].color)} ${constraintClass(game.matrix[i][j].constraint)}`;
+                    cell.addEventListener('click', () => game.changeColor(i, j, changeColorVisual(matrix)));
+                    rowDiv.appendChild(cell);
+                }
+                matrix.appendChild(rowDiv);
+            }
+        }
+
+        function changeColorVisual(matrixHTML) {
+            return (color, constraint, i, j) => {
+                const cell = matrixHTML.children[i].children[j];
+                cell.className = `cell ${colorClass(color)} ${constraintClass(constraint)}`;
+            }
+        }
+
+        class Command {
+            constructor(command) {
+                this.row = command[0];
+                this.col = command[1];
+                this.matrix = document.getElementById('matrix');
+            }
+            
+            click() {
+                let cell = this.matrix.children[this.row].children[this.col]
+                if (cell) {
+                    cell.click();
+                }
+            }
+        }
+
+        async function play() {
+            if (playing) return;
+            playing = true;
+
+            const matrix = document.getElementById('matrix');
+            try {
+                await game.runPlanWithCallback(document.getElementById('planning-input').value, async (row, col) => {
+                    let cell = matrix.children[row].children[col];
+                    cell.click();
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                })
+            } finally {
+                playing = false;
+            }
+        }
+
+        function playWithoutGui() {
+            game.runPlan(document.getElementById('planning-input').value);
+        }
+
+    </script>
+
+
+
+<div class="center">
+<p>Author: Lights out game, mojificado por Bruno Ribas Bruno Ribeiro,
+Igor Penha, Lucas Bergholz e Wagner Cunha</p>
+</div>
+
+
+</body></html>
