@@ -1,39 +1,81 @@
-(define (problem lightsout)
+(define (problem lights-out)
   (:domain lights-out)
 
   (:objects 
-    x1 x2 x3 x4 y1 y2 y3 y4 - position
+    p1-1 p1-2 p1-3 p1-4 p2-1 p2-2 p2-3 p2-4 p3-1 p3-2 p3-3 p3-4 p4-1 p4-2 p4-3 p4-4 - position
   )
 
   (:init
-    (same-row x1 y1) (same-row x1 y2) (same-row x1 y3) (same-row x1 y4)
-    (same-row x2 y1) (same-row x2 y2) (same-row x2 y3) (same-row x2 y4)
-    (same-row x3 y1) (same-row x3 y2) (same-row x3 y3) (same-row x3 y4)
-    (same-row x4 y1) (same-row x4 y2) (same-row x4 y3) (same-row x4 y4)
-    
-    (same-column x1 y1) (same-column x2 y1) (same-column x3 y1) (same-column x4 y1)
-    (same-column x1 y2) (same-column x2 y2) (same-column x3 y2) (same-column x4 y2)
-    (same-column x1 y3) (same-column x2 y3) (same-column x3 y3) (same-column x4 y3)
-    (same-column x1 y4) (same-column x2 y4) (same-column x3 y4) (same-column x4 y4)
+    (same-row p1-1 p1-2) (same-row p1-1 p1-3) (same-row p1-1 p1-4)
+    (same-row p1-2 p1-1) (same-row p1-2 p1-3) (same-row p1-2 p1-4)
+    (same-row p1-3 p1-1) (same-row p1-3 p1-2) (same-row p1-3 p1-4)
+    (same-row p1-4 p1-1) (same-row p1-4 p1-2) (same-row p1-4 p1-3) 
 
-    (is-static x1 y1)
-    (is-static-hv x4 y4)
-    (is-static-h x2 y2)
-    (is-static-v x3 y3)
+    (same-row p2-1 p2-2) (same-row p2-1 p2-3) (same-row p2-1 p2-4)
+    (same-row p2-2 p2-1) (same-row p2-2 p2-3) (same-row p2-2 p2-4)
+    (same-row p2-3 p2-1) (same-row p2-3 p2-2) (same-row p2-3 p2-4)
+    (same-row p2-4 p2-1) (same-row p2-4 p2-2) (same-row p2-4 p2-3) 
     
-    (is-off x1 y1) (is-off x2 y2) (is-off x2 y3) (is-off x4 y2) (is-off x4 y3) (is-off x4 y4)
-    (is-red x1 y2) (is-red x1 y3) (is-red x2 y1) (is-red x4 y4)
-    (is-green x3 y2) (is-green x3 y3) (is-green x3 y4)
-    (is-blue x3 y1) (is-blue x1 y4) 
+    (same-row p3-1 p3-2) (same-row p3-1 p3-3) (same-row p3-1 p3-4)
+    (same-row p3-2 p3-1) (same-row p3-2 p3-3) (same-row p3-2 p3-4)
+    (same-row p3-3 p3-1) (same-row p3-3 p3-2) (same-row p3-3 p3-4)
+    (same-row p3-4 p3-1) (same-row p3-4 p3-2) (same-row p3-4 p3-3)
+
+    (same-row p4-1 p4-2) (same-row p4-1 p4-3) (same-row p4-1 p4-4)
+    (same-row p4-2 p4-1) (same-row p4-2 p4-3) (same-row p4-2 p4-4)
+    (same-row p4-3 p4-1) (same-row p4-3 p4-2) (same-row p4-3 p4-4)
+    (same-row p4-4 p4-1) (same-row p4-4 p4-2) (same-row p4-4 p4-3) 
+    
+
+    (same-column p1-1 p2-1) (same-column p1-1 p3-1) (same-column p1-1 p4-1)
+    (same-column p2-1 p1-1) (same-column p2-1 p3-1) (same-column p2-1 p4-1)
+    (same-column p3-1 p1-1) (same-column p3-1 p2-1) (same-column p3-1 p4-1)
+    (same-column p4-1 p1-1) (same-column p4-1 p2-1) (same-column p4-1 p3-1) 
+
+    (same-column p1-2 p2-2) (same-column p1-2 p3-2) (same-column p1-2 p4-2)
+    (same-column p2-2 p1-2) (same-column p2-2 p3-2) (same-column p2-2 p4-2)
+    (same-column p3-2 p1-2) (same-column p3-2 p2-2) (same-column p3-2 p4-2)
+    (same-column p4-2 p1-2) (same-column p4-2 p2-2) (same-column p4-2 p3-2) 
+
+    (same-column p1-3 p2-3) (same-column p1-3 p3-3) (same-column p1-3 p4-3)
+    (same-column p2-3 p1-3) (same-column p2-3 p3-3) (same-column p2-3 p4-3)
+    (same-column p3-3 p1-3) (same-column p3-3 p2-3) (same-column p3-3 p4-3)
+    (same-column p4-3 p1-3) (same-column p4-3 p2-3) (same-column p4-3 p3-3)
+
+    (same-column p1-4 p2-4) (same-column p1-4 p3-4) (same-column p1-4 p4-4)
+    (same-column p2-4 p1-4) (same-column p2-4 p3-4) (same-column p2-4 p4-4)
+    (same-column p3-4 p1-4) (same-column p3-4 p2-4) (same-column p3-4 p4-4)
+    (same-column p4-4 p1-4) (same-column p4-4 p2-4) (same-column p4-4 p3-4)
+
+
+    (is-static p1-1)
+    (is-static-hv p4-4)
+    (is-static-h p2-2)
+    (is-static-v p3-3)
+    
+    (is-off p1-1) (is-off p2-2) (is-off p2-3) (is-off p4-2) (is-off p4-3) (is-off p4-4)
+    (is-red p1-2) (is-red p1-3) (is-red p2-1) (is-red p4-1)
+    (is-green p3-2) (is-green p3-3) (is-green p3-4) (is-green p2-4)
+    (is-blue p3-1) (is-blue p1-4) 
   )
 
   (:goal
-    (forall 
-      (?v - position)
-      (forall 
-          (?w - position)
-          (is-off ?v ?w)
-      )
-    )
+    (and
+    (is-off p1-1)
+    (is-off p1-2)
+    (is-off p1-3)
+    (is-off p1-4)
+    (is-off p2-1)
+    (is-off p2-2)
+    (is-off p2-3)
+    (is-off p2-4)
+    (is-off p3-1)
+    (is-off p3-2)
+    (is-off p3-3)
+    (is-off p3-4)
+    (is-off p4-1)
+    (is-off p4-2)
+    (is-off p4-3)
+    (is-off p4-4))
   )
 )
