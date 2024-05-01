@@ -3,179 +3,132 @@
   (:types position)
 
   (:predicates
-    (same-row ?x1 ?y1 ?x2 ?y2 - position) 
-    (same-column ?x1 ?y1 ?x2 ?y2 - position) 
-    (is-off ?x ?y - position)
-    (is-red ?x ?y - position)
-    (is-green ?x ?y - position)
-    (is-blue ?x ?y - position)
-    (is-static ?x ?y - position)
-    (is-static-hv ?x ?y - position)
-    (is-static-v ?x ?y - position)
-    (is-static-h ?x ?y - position)
+    (same-row ?xy1 ?xy2 - position) 
+    (same-column ?xy1 ?xy2 - position) 
+    (is-off ?xy - position)
+    (is-red ?xy - position)
+    (is-green ?xy - position)
+    (is-blue ?xy - position)
+    (is-static ?xy - position)
+    (is-static-hv ?xy - position)
+    (is-static-v ?xy - position)
+    (is-static-h ?xy - position)
   )
   
   (:action onclick
-    :parameters (?x ?y - position)
-    :precondition (or
-                      (not(is-off ?x ?y))
-                      (is-static ?x ?y)
+    :parameters (?xy - position)
+    :precondition (and
                    )
 
-    :effect 
-    (and
-      (forall
-        (?w - position) 
+    :effect(and
+      (when
+        (not(is-static ?xy))
         (and
-	        (when
+         (when
+            (is-off ?xy)
             (and
-              (same-row ?x ?y ?w ?y)
-              (not(= ?w ?x))
-              (not (is-static-v ?w ?y))
-              (not (is-static-hv ?w ?y))
-            ) 
-            (and
-              (when
-                (is-off ?w ?y)
-                (and
-                  (not(is-off ?w ?y))
-                  (is-red ?w ?y)
-                )
-              )
-              (when
-                (is-red ?w ?y)
-                (and
-                  (not(is-red ?w ?y))
-                  (is-green ?w ?y)
-                )
-              )
-              (when
-                (is-green ?w ?y)
-                (and
-                  (not(is-green ?w ?y))
-                  (is-blue ?w ?y)
-                )
-              )
-              (when
-                (is-blue ?w ?y)
-                (and
-                  (not(is-blue ?w ?y))
-                  (is-off ?w ?y)
-                )
-              )
+              (not(is-off ?xy))
+              (is-red ?xy)
             )
           )
           (when
+            (is-red ?xy)
             (and
-              (same-row ?x ?y ?w ?y)
-              (not(is_static ?w ?y))
+              (not(is-red ?xy))
+              (is-green ?xy)
             )
+          )
+          (when
+            (is-green ?xy)
             (and
-              (when
-                (is-off ?w ?y)
-                (and
-                  (not(is-off ?w ?y))
-                  (is-red ?w ?y)
-                )
-              )
-              (when
-                (is-red ?w ?y)
-                (and
-                  (not(is-red ?w ?y))
-                  (is-green ?w ?y)
-                )
-              )
-              (when
-                (is-green ?w ?y)
-                (and
-                  (not(is-green ?w ?y))
-                  (is-blue ?w ?y)
-                )
-              )
-              (when
-                (is-blue ?w ?y)
-                (and
-                  (not(is-blue ?w ?y))
-                  (is-off ?w ?y)
-                )
-              )
+              (not(is-green ?xy))
+              (is-blue ?xy)
+            )
+          )
+          (when
+            (is-blue ?xy)
+            (and
+              (not(is-blue ?xy))
+              (is-off ?xy)
             )
           )
         )
       )
       (forall
-        (?w - position) 
+        (?vw - position) 
         (and
-          (when
+	      (when
             (and
-              (same-column ?x ?y ?x ?w)
-              (not (= ?w ?y))
-              (not (is-static-v ?x ?w))
-              (not (is-static-hv ?x ?w))
+              (same-row ?xy ?vw)
+              (not(= ?xy ?vw))
+              (not (is-static-h ?vw))
+              (not (is-static-hv ?vw))
             ) 
             (and
               (when
-                (is-off ?x ?w)
+                (is-off ?vw)
                 (and
-                  (not(is-off ?x ?w))
-                  (is-red ?x ?w)
+                  (not(is-off ?vw))
+                  (is-red ?vw)
                 )
               )
               (when
-                (is-red ?x ?w)
+                (is-red ?vw)
                 (and
-                  (not(is-red ?x ?w))
-                  (is-green ?x ?w)
+                  (not(is-red ?vw))
+                  (is-green ?vw)
                 )
               )
               (when
-                (is-green ?x ?w)
+                (is-green ?vw)
                 (and
-                  (not(is-green ?x ?w))
-                  (is-blue ?x ?w)
+                  (not(is-green ?vw))
+                  (is-blue ?vw)
                 )
               )
               (when
-                (is-blue ?x ?w)
+                (is-blue ?vw)
                 (and
-                  (not(is-blue ?x ?w))
-                  (is-off ?x ?w)
+                  (not(is-blue ?vw))
+                  (is-off ?vw)
                 )
               )
             )
           )
           (when
             (and
-              (same-column ?x ?y ?x ?w)
-              (not(is_static ?x ?w))
-            )
+              (same-column ?vw ?xy)
+              (not(= ?xy ?vw))
+              (not (is-static-v ?vw))
+              (not (is-static-hv ?vw))
+            ) 
             (and
               (when
-                (is-off ?x ?w)
+                (is-off ?vw)
                 (and
-                  (not(is-off ?x ?w))
-                  (is-red ?x ?w)
+                  (not(is-off ?vw))
+                  (is-red ?vw)
                 )
               )
               (when
-                (is-red ?x ?w)
+                (is-red ?vw)
                 (and
-                  (not(is-red ?x ?w))
-                  (is-green ?x ?w)
+                  (not(is-red ?vw))
+                  (is-green ?vw)
                 )
               )
               (when
-                (is-green ?x ?w)
+                (is-green ?vw)
                 (and
-                  (not(is-green ?x ?w))
-                  (is-blue ?x ?w)
+                  (not(is-green ?vw))
+                  (is-blue ?vw)
                 )
               )
               (when
-                (is-blue ?x ?w)
+                (is-blue ?vw)
                 (and
-                  (not(is-blue ?x ?w))
-                  (is-off ?x ?w)
+                  (not(is-blue ?vw))
+                  (is-off ?vw)
                 )
               )
             )
