@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
-#include <fstream>
 using namespace std;
+using namespace std::filesystem;
 
 const int oo = 1e9;
 
@@ -51,7 +51,7 @@ int main() {
 
   fprintf(problem, " - position)\n\t(:init\n\t\t");
 
-  // definindo relação de rows
+  // definindo relação de linhas
   int k = 0;
   for (auto s : matrix) {
     for (int i = 0; i < s.size() / 2; i++) {
@@ -66,26 +66,31 @@ int main() {
   fprintf(problem, "\n\t\t");
 
   // definindo relação de colunas
-  k = 0;
-  for (auto s : matrix) {
-    for (int i = 0; i < s.size() / 2; i++) {
-      for (int j = 0; j < s.size() / 2; j++) {
-        if (i == j) continue;
+  auto s = *max_element(matrix.begin(), matrix.end());
+  int max_column = s.size() / 2;
+
+  for (k = 0; k < max_column; k++) {
+    for (int i = 0; i < m_lenght; i++) {
+      for (int j = 0; j < m_lenght; j++) {
+        if (i == j or matrix[i].size() / 2 <= k or matrix[j].size() / 2 <= k)
+          continue;
         fprintf(problem, "(same-column p%d-%d p%d-%d) ", i, k, j, k);
       }
-      fprintf(problem, "\n\t\t");
+      if (matrix[i].size() / 2 > k) fprintf(problem, "\n\t\t");
     }
-    k++;
   }
+
   fprintf(problem, "\n");
 
   // definindo cores
   for (int i = 0; i < m_lenght; i++) {
-    k = 1;
     for (int j = 0; j < matrix[i].size() / 2; j++) {
-      fprintf(problem, "\t\t(%s p%d-%d)\n", predicates.at(matrix[i][k]).c_str(),
-              i, j);
-      k += 2;
+      if (j == 0)
+        k = 1;
+      else
+        k += 2;
+      fprintf(problem, "\t\t(%s p%d-%d)\n", predicates[matrix[i][k]].c_str(), i,
+              j);
     }
   }
 
@@ -93,12 +98,15 @@ int main() {
 
   // definindo botões
   for (int i = 0; i < m_lenght; i++) {
-    k = 0;
     for (int j = 0; j < matrix[i].size() / 2; j++) {
+      if (j == 0)
+        k = 0;
+      else
+        k += 2;
+
       if (matrix[i][k] != '-')
         fprintf(problem, "\t\t(%s p%d-%d)\n",
-                button_types.at(matrix[i][k]).c_str(), i, j);
-      k += 2;
+                button_types[matrix[i][k]].c_str(), i, j);
     }
   }
 
@@ -130,9 +138,9 @@ int main() {
           "  (is-static-h ?xy - position)\n"
           " )\n"
           " (:action click\n"
-          "  :parameters (?xy - position)"
+          "  :parameters (?xy - position)\n"
           "  :precondition (and)\n"
-          "  :effect(and\n"
+          "  :effect (and\n"
           "   (when\n"
           "    (not(is-static ?xy))\n"
           "    (and\n"
@@ -252,13 +260,32 @@ int main() {
           ")\n");
   fclose(domain), fclose(problem);
   system(
-      "/tmp/dir/software/planners/madagascar/M -S 1 -P 1 -B 0.1 -Q -o "
-      "plano.txt "
+      "/tmp/dir/software/planners/downward-fdss23/fast-downward.py --alias "
+      "seq-sat-fdss-2023 --search-time-limit 178 "
       "domain.pddl "
       "problem.pddl > /dev/null");
 
-  ifstream arquivo("plano.txt");
+  string base_name = "sas_plan.";
+  path directory_path(".");
 
+  int max_file_number = 0;
+
+  for (const auto& entry : directory_iterator(directory_path)) {
+    if (entry.is_regular_file() &&
+        entry.path().filename().string().find(base_name) == 0) {
+      try {
+        int file_number =
+            stoi(entry.path().filename().string().substr(base_name.size()));
+        if (file_number > max_file_number) max_file_number = file_number;
+
+      } catch (const invalid_argument& e) {
+        // Ignorar arquivos que não seguem o padrão de nome
+      }
+    }
+  }
+  base_name += to_string(max_file_number);
+  ifstream arquivo(base_name);
+  if (!arquivo) exit(200);
   while (getline(arquivo, row)) {
     // Encontra a posição do primeiro parêntese
     size_t posInicio = row.find("(");
@@ -273,8 +300,9 @@ int main() {
                 row.end());
       replace(row.begin(), row.end(), '-', ' ');
       // Imprime a row tratada na saída padrão
+
       if (arquivo.peek() == EOF)
-        cout << row << "\n";
+        cout << "\n";
       else
         cout << row << ";";
     }

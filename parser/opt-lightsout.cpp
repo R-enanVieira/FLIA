@@ -137,6 +137,7 @@ int main() {
           " )\n"
           " (:action click\n"
           "  :parameters (?xy - position)\n"
+          "  :precondition (and)\n"
           "  :effect (and\n"
           "   (when\n"
           "    (not(is-static ?xy))\n"
@@ -257,13 +258,13 @@ int main() {
           ")\n");
   fclose(domain), fclose(problem);
   system(
-      "/tmp/dir/software/planners/downward/fast-downward.py --alias "
-      "lama-first "
+      "/tmp/dir/software/planners/downward-fdss23/fast-downward.py --alias "
+      "seq-opt-fdss-2023 --search-time-limit 178 "
       "domain.pddl "
       "problem.pddl > /dev/null");
 
   ifstream arquivo("sas_plan");
-
+  if (!arquivo) exit(200);
   while (getline(arquivo, row)) {
     // Encontra a posição do primeiro parêntese
     size_t posInicio = row.find("(");
